@@ -1,18 +1,33 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <Projects v-if="user" />
+    <Login v-else />
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import Projects from '@/components/Projects.vue';
+import Login from '@/components/Login.vue';
+import axios from 'axios';
 
 export default {
-  name: "Home",
+  name: 'home',
   components: {
-    HelloWorld,
+    Projects,
+    Login,
   },
-};
+  async created() {
+    try {
+      let response = await axios.get('/api/users');
+      this.$root.$data.user = response.data.user;
+    } catch (error) {
+      this.$root.$data.user = null;
+    }
+  },
+  computed: {
+    user() {
+      return this.$root.$data.user;
+    }
+  }
+}
 </script>

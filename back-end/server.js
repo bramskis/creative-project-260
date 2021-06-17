@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 // connect to the mongodb database
-mongoose.connect('mongodb://localhost:27017/photobomb', {
+mongoose.connect('mongodb://localhost:27017/creative-project-260', {
   useUnifiedTopology: true,
   useNewUrlParser: true
 });
@@ -34,6 +34,9 @@ app.use(cookieSession({
 // import the users module and setup its API path
 const users = require("./users.js");
 app.use("/api/users", users.routes);
+
+const projects = require("./projects.js");
+app.use("/api/projects", projects.routes);
 
 /*const photos = require("./photos.js");
 app.use("/api/photos", photos.routes);*/
