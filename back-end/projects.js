@@ -2,15 +2,6 @@ const mongoose = require('mongoose');
 const express = require("express");
 const router = express.Router();
 
-// Configure multer so that it will upload to '/public/images'
-const multer = require('multer')
-const upload = multer({
-  dest: '../front-end/public/images/',
-  limits: {
-    fileSize: 50000000
-  }
-});
-
 const users = require("./users.js");
 const User = users.model;
 const validUser = users.valid;
@@ -30,10 +21,7 @@ const projectSchema = new mongoose.Schema({
   
 const Project = mongoose.model('Project', projectSchema);
 
-// upload project
 router.post("/", validUser, async (req, res) => {
-  console.log(req);
-    // check parameters
     if (!req.body.name || !req.body.description)
       return res.status(400).send({
         message: "Please add a name or description"
@@ -53,9 +41,7 @@ router.post("/", validUser, async (req, res) => {
     }
 });
 
-// get my projects
 router.get("/", validUser, async (req, res) => {
-    // return projects
     try {
       let projects = await Project.find({
         user: req.user
@@ -69,20 +55,9 @@ router.get("/", validUser, async (req, res) => {
     }
 });
 
-// get all projects
-/*router.get("/all", async (req, res) => {
-    try {
-      let projects = await Project.find().sort({
-        created: -1
-      }).populate('user');
-      return res.send(projects);
-    } catch (error) {
-      console.log(error);
-      return res.sendStatus(500);
-    }
-});*/
-
-router.get("/:id", async (req, res) => {
+//TODO: CHECK THAT THIS IS RIGHT
+//ADDED VALIDUSER
+router.get("/:id", validUser, async (req, res) => {
     try {
         let project = await Project.findById(req.params.id).populate('user');
         return res.send(project);
@@ -90,6 +65,61 @@ router.get("/:id", async (req, res) => {
         console.log(error);
         return res.sendStatus(500);
     }
+});
+
+const noteSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User'
+  },
+  project: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Project'
+  },
+  text: String,
+  created: {
+    type: Date,
+    default: Date.now
+  },
+});
+  
+const Note = mongoose.model('Note', noteSchema);
+
+//ADDED VALIDUSER
+router.post('/:id/notes', validUser, async (req, res) => {
+  try {
+      let project = await Project.findOne({_id: req.params.id});
+      if (!project) {
+          res.send(404);
+          return;
+      }
+      let note = new Note({
+        user: req.user,
+        project: project,
+        text: req.body.text,
+      });
+      await note.save();
+      res.send(note);
+  } catch (error) {
+      console.log(error);
+      res.sendStatus(500);
+  }
+});
+
+//ADDED VALIDUSER
+router.get('/:id/notes', validUser, async (req, res) => {
+  try {
+      let project = await Project.findOne({_id: req.params.id});
+      if (!project) {
+          res.send(404);
+          return;
+      }
+      let notes = await Note.find({project:project});
+      res.send(notes);
+  } catch (error) {
+      console.log(error);
+      res.sendStatus(500);
+  }
 });
 
 module.exports = {

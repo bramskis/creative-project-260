@@ -2,16 +2,13 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 
-// setup express
 const app = express();
 
-// setup body parser middleware to conver to JSON and handle URL encoded forms
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
 }));
 
-// connect to the mongodb database
 mongoose.connect('mongodb://localhost:27017/creative-project-260', {
   useUnifiedTopology: true,
   useNewUrlParser: true
@@ -27,18 +24,19 @@ app.use(cookieSession({
     'secretValue'
   ],
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    maxAge: 24 * 60 * 60 * 1000
   }
 }));
 
-// import the users module and setup its API path
 const users = require("./users.js");
 app.use("/api/users", users.routes);
 
 const projects = require("./projects.js");
 app.use("/api/projects", projects.routes);
 
-/*const photos = require("./photos.js");
-app.use("/api/photos", photos.routes);*/
+/*  --  may not be necessary
+const notes = require("./notes.js");
+app.use("/api/notes", notes.routes);
+*/
 
 app.listen(3005, () => console.log('Server listening on port 3005!'));

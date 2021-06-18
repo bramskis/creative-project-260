@@ -26,7 +26,6 @@ import ProjectCreator from './ProjectCreator.vue';
 export default {
   name: 'Projects',
   components: {
-    //Uploader,
     ProjectList,
     ProjectCreator
   },
