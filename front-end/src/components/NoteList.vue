@@ -30,7 +30,7 @@ export default {
 
 <style scoped>
 .note {
-    width: 80%;
+    width: 90%;
     display: flex;
     flex-direction: column;
     align-items: center;

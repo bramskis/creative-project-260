@@ -397,4 +397,8 @@ html, body {
 footer {
   float: bottom;
 }
+
+.link {
+    text-decoration: none;
+}
 </style>

@@ -2,7 +2,7 @@
     <div>
         <form v-if="show" @submit.prevent="create">
             <p>New Note</p>
-            <input id="text" v-model="text" placeholder="Add a new note..."><br><br>
+            <textarea id="text" v-model="text" placeholder="Add a new note..."></textarea><br><br>
             <p v-if="error" class="error">{{error}}</p>
             <button class="clickable" style="margin-right: 50px;" type="button" @click="close">Cancel</button>
             <button class="clickable" type="submit">Create</button>
@@ -83,5 +83,18 @@ div {
 
 button {
     font-size: 20px;
+}
+
+#text {
+  height: 150px;
+  width: 90%;
+  background-color: #2c3e50;
+  border-color: whitesmoke;
+  border-radius: 10px;
+  padding: 10px;
+  resize: vertical;
+  color: whitesmoke;
+  font-size: 20px;
+  word-break: break-word;
 }
 </style>

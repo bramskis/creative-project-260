@@ -67,14 +67,17 @@ router.get("/:id", validUser, async (req, res) => {
     }
 });
 
+/**
+ * NOTES
+ */
 const noteSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.ObjectId,
     ref: 'User'
   },
   project: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'Project'
+    type: mongoose.Schema.ObjectId,
+    ref: 'Project'
   },
   text: String,
   created: {
@@ -114,11 +117,98 @@ router.get('/:id/notes', validUser, async (req, res) => {
           res.send(404);
           return;
       }
-      let notes = await Note.find({project:project});
+      let notes = await Note.find({
+        project: project
+      }).sort({
+        created: -1
+      });
       res.send(notes);
   } catch (error) {
       console.log(error);
       res.sendStatus(500);
+  }
+});
+
+/**
+ * SKETCHES
+ */
+ const multer = require('multer')
+ const upload = multer({
+   dest: '../front-end/public/images/',
+   limits: {
+     fileSize: 50000000
+   }
+ });
+
+const sketchSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User'
+  },
+  project: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'Project'
+  },
+  path: String,
+  description: String,
+  created: {
+    type: Date,
+    default: Date.now
+  },
+});
+
+const Sketch = mongoose.model('Sketch', sketchSchema);
+
+router.post("/:id/sketches", validUser, upload.single('sketch'), async (req, res) => {
+  // check parameters
+  if (!req.file)
+    return res.status(400).send({
+      message: "Must upload a file."
+    });
+
+  let project = await Project.findOne({_id: req.params.id});
+
+  const sketch = new Sketch({
+    user: req.user,
+    project: project,
+    path: "/images/" + req.file.filename,
+    description: req.body.description,
+  });
+  try {
+    await sketch.save();
+    return res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+router.get("/:id/sketches", validUser, async (req, res) => {
+  try {
+    let project = await Project.findOne({_id: req.params.id});
+    if (!project) {
+      res.send(404);
+      return;
+    }
+    let sketchs = await Sketch.find({
+      project: project
+    }).sort({
+      created: -1
+    }).populate('user');
+    return res.send(sketchs);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+router.get("/:projectId/sketches/:sketchId", validUser, async (req, res) => {
+  try {
+      let sketch = await Sketch.findById(req.params.sketchId).populate('user');
+      return res.send(sketch);
+  } catch (error) {
+      console.log(error);
+      return res.sendStatus(500);
   }
 });
 
