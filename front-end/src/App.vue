@@ -4,6 +4,7 @@
       <router-link to="/">Comic Book Creator</router-link>
     </div>
     <router-view />
+    <footer>Worked on for 25-30 hours</footer>
   </div>
 </template>
 

@@ -1,5 +1,7 @@
 <template>
 <div class="hero">
+  <h2 id="websiteDescription">Use Comic Book Creator to organize your new comic projects!<br>
+    Add projects, give them a description, then add new comments and sketches to your projects!</h2>
   <div class="heroBox">
     <form class="pure-form">
         <legend>Register for an account</legend><br>
@@ -80,6 +82,11 @@ export default {
 <style scoped>
 .space-above {
   margin-top: 50px;
+}
+
+#websiteDescription {
+  margin-top: 30px;
+  margin-bottom: 40px;
 }
 
 h1 {
